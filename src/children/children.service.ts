@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
@@ -26,8 +27,8 @@ export class ChildrenService {
     });
   }
 
-  addToyToChild(childid: number, toyid: number) {
-    return this.db.gyerek.update({
+  async addToyToChild(childid: number, toyid: number) {
+    const add  = await this.db.gyerek.update({
       where: { id: childid },
       data: {
         jatek: {
@@ -36,10 +37,14 @@ export class ChildrenService {
       },
       include: { jatek: true },
     });
+    if(!add){
+      throw new Error(`Error putting toy to childerns wishlist`)
+    }
+    return add;
   }
 
-  removeToyFromChild(childid: number, toyid: number) {
-    return this.db.gyerek.update({
+  async removeToyFromChild(childid: number, toyid: number) {
+    const remove = await this.db.gyerek.update({
       where: { id: childid },
       data: {
         jatek: {
@@ -47,6 +52,9 @@ export class ChildrenService {
         },
       },
     });
+    if(!remove){
+      throw new Error(`Error putting toy to childerns wishlist`)
+    }
   }
 
   update(id: number, updateChildDto: UpdateChildDto) {

@@ -9,6 +9,7 @@ import {
   Delete,
   Put,
   NotFoundException,
+  HttpException,
 } from '@nestjs/common';
 import { ChildrenService } from './children.service';
 import { CreateChildDto } from './dto/create-child.dto';
@@ -75,12 +76,9 @@ export class ChildrenController {
   ) {
     try{
     return await this.childrenService.addToyToChild(+childid, +toyid);
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        if (e.code == 'P2025')
-          throw new NotFoundException(`Id not found`);
-      }
-      throw e;
+    }
+    catch(error){
+      throw new HttpException({error: `One of the ids are wrong, \nError: ${error}`}, 404);
     }
   }
 
@@ -91,12 +89,9 @@ export class ChildrenController {
   ) {
     try{
     return await this.childrenService.removeToyFromChild(+childid, +toyid);
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        if (e.code == 'P2025')
-          throw new NotFoundException(`Id not found`);
-      }
-      throw e;
+    }
+    catch(error){
+      throw new HttpException({error: `One of the ids are wrong, \nError: ${error}`}, 404);
     }
   }
 }
