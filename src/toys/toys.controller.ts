@@ -1,8 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  NotFoundException,
+} from '@nestjs/common';
 import { ToysService } from './toys.service';
 import { CreateToyDto } from './dto/create-toy.dto';
 import { UpdateToyDto } from './dto/update-toy.dto';
+import { Prisma } from 'generated/prisma/client';
 
 @Controller('toys')
 export class ToysController {
@@ -19,18 +29,49 @@ export class ToysController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.toysService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    try{
+    return await this.toysService.findOne(+id);
+    }
+    catch (e) {
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError
+      ) {
+        if(e.code == "P2025")
+        throw new NotFoundException(`Toy with id ${id} not found`);
+      }
+      throw e;
+    }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateToyDto: UpdateToyDto) {
-    
-    return this.toysService.update(+id, updateToyDto);
+  async update(@Param('id') id: string, @Body() updateToyDto: UpdateToyDto) {
+    try {
+      return await this.toysService.update(+id, updateToyDto);
+    } catch (e) {
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError
+      ) {
+        if(e.code == "P2025")
+        throw new NotFoundException(`Toy with id ${id} not found`);
+      }
+      throw e;
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.toysService.remove(+id);
+  async remove(@Param('id') id: string) {
+    try{
+    return await this.toysService.remove(+id);
+    }
+    catch (e) {
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError
+      ) {
+        if(e.code == "P2025")
+        throw new NotFoundException(`Toy with id ${id} not found`);
+      }
+      throw e;
+    }
   }
 }

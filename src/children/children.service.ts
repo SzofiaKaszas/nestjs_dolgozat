@@ -21,7 +21,7 @@ export class ChildrenService {
   }
 
   findOne(id: number) {
-    return this.db.gyerek.findUnique({
+    return this.db.gyerek.findUniqueOrThrow({
       where: { id },
     });
   }

@@ -24,18 +24,19 @@ export class ToysService {
   }
 
   findOne(id: number) {
-    return this.db.jatek.findUnique({
+    return this.db.jatek.findUniqueOrThrow({
       where: {id},
     });
   }
 
-  update(id: number, updateToyDto: UpdateToyDto) {
+ update(id: number, updateToyDto: UpdateToyDto) {
+
     return this.db.jatek.update({
-      where: {id},
+      where: { id },
       data: {
         name: updateToyDto.name,
         anyag: updateToyDto.material,
-        suly: updateToyDto.weight
+        suly: updateToyDto.weight,
       },
     });
   }

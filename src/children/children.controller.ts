@@ -1,8 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Put,
+  NotFoundException,
+} from '@nestjs/common';
 import { ChildrenService } from './children.service';
 import { CreateChildDto } from './dto/create-child.dto';
 import { UpdateChildDto } from './dto/update-child.dto';
+import { Prisma } from 'generated/prisma/client';
 
 @Controller('children')
 export class ChildrenController {
@@ -19,33 +30,57 @@ export class ChildrenController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.childrenService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    try {
+      return await this.childrenService.findOne(+id);
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code == 'P2025')
+          throw new NotFoundException(`Child with id ${id} not found`);
+      }
+      throw e;
+    }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateChildDto: UpdateChildDto) {
-    return this.childrenService.update(+id, updateChildDto);
+  async update(@Param('id') id: string, @Body() updateChildDto: UpdateChildDto) {
+    try{
+    return await this.childrenService.update(+id, updateChildDto);
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code == 'P2025')
+          throw new NotFoundException(`Child with id ${id} not found`);
+      }
+      throw e;
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.childrenService.remove(+id);
+  async remove(@Param('id') id: string) {
+    try{
+    return await this.childrenService.remove(+id);
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code == 'P2025')
+          throw new NotFoundException(`Child with id ${id} not found`);
+      }
+      throw e;
+    }
   }
 
   @Put(':childid/toys/:toyid')
   addToyToChild(
     @Param('childid') childid: string,
-    @Param('toyid') toyid : string,
-  ){
-    return this.childrenService.addToyToChild(+childid, +toyid)
+    @Param('toyid') toyid: string,
+  ) {
+    return this.childrenService.addToyToChild(+childid, +toyid);
   }
 
   @Delete(':childid/toys/:toyid')
   removeToyFromChild(
     @Param('childid') childid: string,
-    @Param('toyid') toyid : string,
-  ){
-    return this.childrenService.removeToyFromChild(+childid, +toyid)
+    @Param('toyid') toyid: string,
+  ) {
+    return this.childrenService.removeToyFromChild(+childid, +toyid);
   }
 }
