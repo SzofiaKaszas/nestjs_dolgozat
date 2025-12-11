@@ -69,18 +69,34 @@ export class ChildrenController {
   }
 
   @Put(':childid/toys/:toyid')
-  addToyToChild(
+  async addToyToChild(
     @Param('childid') childid: string,
     @Param('toyid') toyid: string,
   ) {
-    return this.childrenService.addToyToChild(+childid, +toyid);
+    try{
+    return await this.childrenService.addToyToChild(+childid, +toyid);
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code == 'P2025')
+          throw new NotFoundException(`Id not found`);
+      }
+      throw e;
+    }
   }
 
   @Delete(':childid/toys/:toyid')
-  removeToyFromChild(
+  async removeToyFromChild(
     @Param('childid') childid: string,
     @Param('toyid') toyid: string,
   ) {
-    return this.childrenService.removeToyFromChild(+childid, +toyid);
+    try{
+    return await this.childrenService.removeToyFromChild(+childid, +toyid);
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code == 'P2025')
+          throw new NotFoundException(`Id not found`);
+      }
+      throw e;
+    }
   }
 }
