@@ -27,6 +27,14 @@ export class ChildrenService {
     });
   }
 
+  async getToysOfChild(id: number) {
+    const childWithToys =  await this.db.gyerek.findUniqueOrThrow({
+      where: { id },
+      include: { jatek: true },
+    });
+    return childWithToys.jatek;
+  }
+
   async addToyToChild(childid: number, toyid: number) {
     const add  = await this.db.gyerek.update({
       where: { id: childid },

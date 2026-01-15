@@ -25,6 +25,11 @@ export class ChildrenController {
     return this.childrenService.create(createChildDto);
   }
 
+  @Get(':id/toys')
+  getToysOfChild(@Param('id') id: number) {
+    return this.childrenService.getToysOfChild(+id);
+  }
+
   @Get()
   findAll() {
     return this.childrenService.findAll();
@@ -44,9 +49,12 @@ export class ChildrenController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateChildDto: UpdateChildDto) {
-    try{
-    return await this.childrenService.update(+id, updateChildDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateChildDto: UpdateChildDto,
+  ) {
+    try {
+      return await this.childrenService.update(+id, updateChildDto);
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         if (e.code == 'P2025')
@@ -58,8 +66,8 @@ export class ChildrenController {
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    try{
-    return await this.childrenService.remove(+id);
+    try {
+      return await this.childrenService.remove(+id);
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         if (e.code == 'P2025')
@@ -74,11 +82,13 @@ export class ChildrenController {
     @Param('childid') childid: string,
     @Param('toyid') toyid: string,
   ) {
-    try{
-    return await this.childrenService.addToyToChild(+childid, +toyid);
-    }
-    catch(error){
-      throw new HttpException({error: `One of the ids are wrong, \nError: ${error}`}, 404);
+    try {
+      return await this.childrenService.addToyToChild(+childid, +toyid);
+    } catch (error) {
+      throw new HttpException(
+        { error: `One of the ids are wrong, \nError: ${error}` },
+        404,
+      );
     }
   }
 
@@ -87,11 +97,13 @@ export class ChildrenController {
     @Param('childid') childid: string,
     @Param('toyid') toyid: string,
   ) {
-    try{
-    return await this.childrenService.removeToyFromChild(+childid, +toyid);
-    }
-    catch(error){
-      throw new HttpException({error: `One of the ids are wrong, \nError: ${error}`}, 404);
+    try {
+      return await this.childrenService.removeToyFromChild(+childid, +toyid);
+    } catch (error) {
+      throw new HttpException(
+        { error: `One of the ids are wrong, \nError: ${error}` },
+        404,
+      );
     }
   }
 }
